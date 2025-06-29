@@ -42,3 +42,9 @@ export const contactsMessages = contacts.map((contact) => {
 
   return { contact, messages };
 });
+
+export const initiateNewChat = () => {
+  const contact = new User();
+  const messages = [];
+  return { contact, messages };
+}

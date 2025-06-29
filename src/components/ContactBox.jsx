@@ -15,12 +15,12 @@ export default function ContactBox({ contact, setContactSelected, messages }) {
             <div className="right-section">
                 <div className="contact-box-header">
                     <h3 className="profilePicture-title">{contact.name}</h3>
-                    <span className="time-mark">{lastMsg.date.toLocaleDateString()}</span>
+                    {lastMsg && <span className="time-mark">{lastMsg.date.toLocaleDateString()}</span>}
                 </div>
-                <div className="last-msg">
+                {lastMsg && <div className="last-msg">
                     <img src={doubleCheck} alt="" className="icon-small" />
                     <span className="text">{truncate(lastMsg.msg, 30)}</span>
-                </div>
+                </div>}
             </div>
         </div>
     )
