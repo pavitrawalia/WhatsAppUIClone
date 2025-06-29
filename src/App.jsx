@@ -1,35 +1,80 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React, { useState, useEffect } from 'react'
+
+import { mainUser, contactsMessages, Message } from './generateFakeData'
+import ProfilePicture from './components/ProfilePicture'
+import ContactBox from './components/ContactBox'
+import MessagesBox from './components/MessagesBox'
+import ChatInputBox from './components/ChatInputBox'
+import Search from './components/Search'
+import Welcome from './components/Welcome'
+
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [data, setData] = useState(contactsMessages)
+    const [contactSelected, setContactSelected] = useState({})
+    const [currentMessages, setCurrentMessages] = useState([])
+    const [message, setMessage] = useState('')
+    const [search, setSearch] = useState('')
+    const [filteredContacts, setFilterContacts] = useState([])
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    useEffect(() => {
+        const currContact = data.find((d) => d.contact.id === contactSelected.id)
+        setCurrentMessages((currContact && currContact.messages) || [])
+        filterContacts(data, search)
+    }, [contactSelected, data, search])
+
+    function pushMessage() {
+        const index = data.findIndex((d) => d.contact.id === contactSelected.id)
+        const newData = Object.assign([], data, {
+            [index]: {
+                contact: contactSelected,
+                messages: [...data[index].messages, new Message(true, message, new Date())],
+            },
+        })
+
+        setData(newData)
+        setMessage('')
+    }
+
+    function filterContacts(data, search) {
+        const result = data.filter(({ contact }) => {
+            return !search || contact.name.toLowerCase().includes(search.toLowerCase())
+        })
+        setFilterContacts(result)
+    }
+
+    return (
+        <div className="app">
+            <aside>
+                <header>
+                    <ProfilePicture user={mainUser} />
+                </header>
+                <Search search={search} setSearch={setSearch} />
+                <div className="contact-boxes">
+                    {filteredContacts.map(({ contact, messages }) => (
+                        <ContactBox
+                            contact={contact}
+                            key={contact.id}
+                            setContactSelected={setContactSelected}
+                            messages={messages}
+                        />
+                    ))}
+                </div>
+            </aside>
+            {contactSelected.id ? (
+                <main>
+                    <header>
+                        <ProfilePicture user={contactSelected} showName />
+                    </header>
+                    <MessagesBox messages={currentMessages} />
+                    <ChatInputBox message={message} setMessage={setMessage} pushMessage={pushMessage} />
+                </main>
+            ) : (
+                <Welcome />
+            )}
+        </div>
+    )
 }
 
 export default App
