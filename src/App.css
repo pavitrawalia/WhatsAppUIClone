@@ -102,6 +102,10 @@ main header {
     display: flex;
     align-items: center;
 }
+.profilePicture-wrap {
+    display: flex;
+    align-items: center;
+}
 .right-section {
     width: 100%;
 }

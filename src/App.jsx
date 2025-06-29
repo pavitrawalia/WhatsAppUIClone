@@ -25,6 +25,12 @@ function App() {
         setContactSelected(newChatData?.contact)
     }
 
+    const deleteChat = (user) => { 
+        const filteredChat = data.filter((usr)=> usr?.contact.id !== user?.id )
+        setData(filteredChat)
+        setContactSelected({})
+    }
+
     useEffect(() => {
         const currContact = data.find((d) => d?.contact?.id === contactSelected?.id)
         setCurrentMessages((currContact && currContact.messages) || [])
@@ -75,7 +81,7 @@ function App() {
             {contactSelected.id ? (
                 <main>
                     <header>
-                        <ProfilePicture user={contactSelected} showName />
+                        <ProfilePicture user={contactSelected} showName deleteChat={deleteChat}/>
                     </header>
                     <MessagesBox messages={currentMessages} />
                     <ChatInputBox message={message} setMessage={setMessage} pushMessage={pushMessage} />
